@@ -35,6 +35,11 @@
 #define BLOOD_CAUTERIZATION_RATIO 10
 #define BLOOD_CAUTERIZATION_DAMAGE_RATIO 300
 
+// theosmed
+#define HEDIFF_SURFACE_WOUND 1 //stuff directly in the wound bed, sutures, mesh
+#define HEDIFF_SURFACE_SKIN 2 //stuff applied on top of a wound bed, salves, alcohol
+#define HEDIFF_SURFACE_WRAPPING 3 // stuff used to secure a wound bed, gauze
+
 //Sizes of mobs, used by mob/living/var/mob_size
 #define MOB_SIZE_TINY 0
 #define MOB_SIZE_SMALL 1
