@@ -1,8 +1,7 @@
-/* Health differentials
-** Applied to limbs, these store damage and handle related effects
-** Such as bleeding and infections.
+/** Health differentials
+ * Applied to limbs, these store damage and handle related effects
+ * Such as bleeding and infections.
 */
-
 /datum/hediff
 	/// Used for health readouts
 	var/name = "lycanthropy"

@@ -76,10 +76,10 @@
 				continue
 			//We want an accurate reading of .len
 			listclearnulls(BP.embedded_objects)
-			for(var/obj/item/embeddies in BP.embedded_objects)
+			for(var/obj/item/embeddies in BP.embedded_objects) //this is going to be fun THEOTODO: handle this
 				if(!embeddies.isEmbedHarmless())
 					BP.adjust_bleeding(0.1, BLOOD_LOSS_DAMAGE_MAXIMUM)
-			limb_bleed += BP.bleeding
+			limb_bleed += BP.get_bleeding()
 
 		if(limb_bleed && !bleedsuppress && !HAS_TRAIT(src, TRAIT_FAKEDEATH))
 			bleed(limb_bleed)

@@ -4,6 +4,8 @@
 
 //Damage defines //TODO: merge these down to reduce on defines
 #define BRUTE "brute"
+#define BRUTE_SHARP "sharp"
+#define BRUTE_PIERCE "pierce"
 #define BURN "fire"
 #define TOX "toxin"
 #define OXY "oxygen"

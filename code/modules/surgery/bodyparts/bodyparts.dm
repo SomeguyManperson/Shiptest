@@ -60,6 +60,7 @@
 	var/bleed_damage_min_blunt = 10
 	/// Current limb bleeding, increased when the limb takes brute damage over certain thresholds, decreased through bandages and cauterization
 	var/bleeding = 0
+	var/list/hediffs = list()
 
 	/// So we know if we need to scream if this limb hits max damage
 	var/last_maxed
@@ -218,7 +219,7 @@
 //Applies brute and burn damage to the organ. Returns 1 if the damage-icon states changed at all.
 //Damage will not exceed max_damage using this proc
 //Cannot apply negative damage
-/obj/item/bodypart/proc/receive_damage(brute = 0, burn = 0, stamina = 0, blocked = 0, updating_health = TRUE, required_status = null, break_modifier = 1, sharpness = FALSE)
+/obj/item/bodypart/proc/receive_damage(damage = 0, damtype = BRUTE, blocked = 0, updating_health = TRUE, required_status = null, break_modifier = 1, sharpness = FALSE)
 	var/hit_percent = (100-blocked)/100
 	if((!brute && !burn && !stamina) || hit_percent <= 0)
 		return FALSE
@@ -232,24 +233,30 @@
 	brute = round(max(brute * dmg_mlt, 0),DAMAGE_PRECISION)
 	burn = round(max(burn * dmg_mlt, 0),DAMAGE_PRECISION)
 	stamina = round(max(stamina * dmg_mlt, 0),DAMAGE_PRECISION)
-	brute = max(0, brute - brute_reduction)
-	burn = max(0, burn - burn_reduction)
+	var/datum/hediff/damage/booboo = new() //flatten damagetypes into brute/burn
+	switch(booboo.damtype)
+		if(BRUTE)
+			booboo.damage -= min(booboo.damage, brute_reduction)
+		if(BURN)
+			booboo.damage -= min(booboo.damage, burn_reduction)
 	//No stamina scaling.. for now..
 
 	if(!brute && !burn && !stamina)
+		qdel(booboo)
 		return FALSE
 
 	switch(animal_origin)
 		if(ALIEN_BODYPART,LARVA_BODYPART) //aliens take double burn //nothing can burn with so much snowflake code around
-			burn *= 2
+			if(booboo.damtype = BURN)
+				booboo.damage *= 2
 
 	// Is the damage greater than the threshold, and if so, probability of damage + item force
 	if((brute_dam > bone_break_threshold) && prob(brute_dam + break_modifier))
 		break_bone()
 
 	// Bleeding is applied here
-	if(brute_dam+brute >= (sharpness ? bleed_threshold : bleed_threshold_blunt) && brute >= (sharpness ? bleed_damage_min : bleed_damage_min_blunt))
-		adjust_bleeding(brute * BLOOD_LOSS_DAMAGE_BASE, BLOOD_LOSS_DAMAGE_MAXIMUM)
+	/*if(brute_dam+brute >= (sharpness ? bleed_threshold : bleed_threshold_blunt) && brute >= (sharpness ? bleed_damage_min : bleed_damage_min_blunt))
+		adjust_bleeding(brute * BLOOD_LOSS_DAMAGE_BASE, BLOOD_LOSS_DAMAGE_MAXIMUM)*/
 
 	var/can_inflict = max_damage - get_damage()
 	if(can_inflict <= 0)
@@ -261,8 +268,8 @@
 		brute = round(brute * (can_inflict / total_damage),DAMAGE_PRECISION)
 		burn = round(burn * (can_inflict / total_damage),DAMAGE_PRECISION)
 
-	brute_dam += brute
-	burn_dam += burn
+	hediffs += booboo
+	booboo.apply_damage()
 
 	//We've dealt the physical damages, if there's room lets apply the stamina damage.
 	if(stamina)
@@ -331,6 +338,24 @@
 		return
 	. = stamina_dam
 	stamina_dam = new_value
+
+/obj/item/bodypart/proc/get_bleeding()
+	if(owner.dna && (NOBLOOD in owner.dna.species.species_traits))
+		return
+	for(var/datum/hediff/damage/ouchie in get_damage_type(BRUTE))
+		. += ouchie.get_effective_bleeding()
+
+/// Returns the amount of damage the limb has of this damage type
+/obj/item/bodypart/proc/get_damage(damtype = BRUTE)
+	. = 0
+	for(var/datum/hediff/damage/ouchie in get_damage_type(damtype))
+		. += ouchie.damage
+
+/// Returns a list of damage hediffs with this damage type
+/obj/item/bodypart/proc/get_damage_type(damtype = BRUTE)
+	for(var/datum/hediff/damage/ouchie in hediffs)
+		if(ouchie.damtype == damtype)
+			. += ouchie
 
 /// Adjusts bodypart bleeding,  value = amount of change, maximum = maximum current bloodloss amount this can modify
 /obj/item/bodypart/proc/adjust_bleeding(value, maximum = BLOOD_LOSS_MAXIMUM)

@@ -1,3 +1,6 @@
+/** Treatments are applied to damage hediffs to make them kill you less
+ *  This is accomplished by reducing the damage and bleeding caused by said damage hediff over time
+ */
 /datum/treatment
 	var/name = "ubercharge"
 	var/plural = FALSE
@@ -7,9 +10,9 @@
 	var/bleed_suppress = 0
 	/// Amount of bleeding this will remove per process
 	var/bleed_staunch = 0
-	/// Surface level this is applied to (skin, surface, wrapping).
+	/// Surface level this is applied to (wound, skin, wrapping).
 	var/surface_level = HEDIFF_SURFACE_WOUND
-	var/infection_mod = 1
+	var/infection_mod = 1 //THEOTODO: HANDLE THIS
 
 /// Kills the effect and returns a string of flavortext
 /datum/treatment/proc/end_effect()
@@ -27,7 +30,13 @@
 	name = "improvised gauze wrapping"
 	bleed_staunch = 0.01
 	infection_mod = 1
-	integrity = 15
+
+/datum/treatment/cauterization
+	name = "cauterization"
+	plural = TRUE
+	bleed_staunch = 0.01
+	bleed_suppress = 2.5
+	surface_level = HEDIFF_SURFACE_WOUND
 
 /datum/treatment/suture
 	name = "suturing"
