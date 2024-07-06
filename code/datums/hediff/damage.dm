@@ -15,7 +15,7 @@
 
 /// Do things here after damage numbers are finalized
 /datum/hediff/damage/proc/apply_damage()
-	if(bleed_coeff)
+	if(bleed_coeff && damage > bleed_min)
 		bleeding += damage * bleed_coeff
 
 /datum/hediff/damage/end_effect()
@@ -47,6 +47,7 @@
 	if(!damage)
 		end_effect(src)
 
+/// Gets the treatment on the highest layer, usually for flavortext stuff
 /datum/hediff/damage/proc/get_highest_treatment()
 	if(!LAZYLEN(treatments))
 		return
@@ -66,15 +67,18 @@
 	bleed_min = 12
 /datum/hediff/damage/brute/sharp
 	name = "cut"
+	plural = FALSE
 	bleed_coeff = 0.013
 	bleed_min = 5
-/datum/hediff/damage/brute/bullet
-	name = "gunshot wound"
+/datum/hediff/damage/brute/pierce
+	name = "puncture"
+	plural = FALSE
 	bleed_coeff = 0.013
-	bleed_min = 11 //prevents beanbags and rubbershot from causing bleeding
+	bleed_min = 11
 /datum/hediff/damage/burn
 	name = "burns"
 	plural = TRUE
 	damtype = BURN
-/datum/hediff/damage/burn/general
+/datum/hediff/damage/burn/acute
 	name = "blister"
+	plural = FALSE

@@ -230,24 +230,36 @@
 		return FALSE
 
 	var/dmg_mlt = CONFIG_GET(number/damage_multiplier) * hit_percent
-	brute = round(max(brute * dmg_mlt, 0),DAMAGE_PRECISION)
-	burn = round(max(burn * dmg_mlt, 0),DAMAGE_PRECISION)
-	stamina = round(max(stamina * dmg_mlt, 0),DAMAGE_PRECISION)
-	var/datum/hediff/damage/booboo = new() //flatten damagetypes into brute/burn
-	switch(booboo.damtype)
+	//brute = round(max(brute * dmg_mlt, 0),DAMAGE_PRECISION)
+	//burn = round(max(burn * dmg_mlt, 0),DAMAGE_PRECISION)
+	//stamina = round(max(stamina * dmg_mlt, 0),DAMAGE_PRECISION)
+	var/datum/hediff/damage/booboo
+	switch(damtype)
 		if(BRUTE)
+			booboo = new /datum/hediff/damage/brute/blunt()
+		if(BRUTE_SHARP)
+			booboo = new /datum/hediff/damage/brute/sharp()
+		if(BRUTE_PIERCE)
+			booboo = new /datum/hediff/damage/brute/pierce()
+		if(BURN)
+			booboo = new /datum/hediff/damage/burn/acute()
+
+	switch(booboo.damtype)//flatten damagetypes into brute/burn
+		if(BRUTE)
+			booboo.damage = round(max(damage * dmg_mlt, 0),DAMAGE_PRECISION)
 			booboo.damage -= min(booboo.damage, brute_reduction)
 		if(BURN)
+			booboo.damage = round(max(damage * dmg_mlt, 0),DAMAGE_PRECISION)
 			booboo.damage -= min(booboo.damage, burn_reduction)
 	//No stamina scaling.. for now..
 
-	if(!brute && !burn && !stamina)
+	if(!booboo.damage && !stamina)
 		qdel(booboo)
 		return FALSE
 
 	switch(animal_origin)
 		if(ALIEN_BODYPART,LARVA_BODYPART) //aliens take double burn //nothing can burn with so much snowflake code around
-			if(booboo.damtype = BURN)
+			if(booboo.damtype == BURN)
 				booboo.damage *= 2
 
 	// Is the damage greater than the threshold, and if so, probability of damage + item force
@@ -316,7 +328,7 @@
 	return update_bodypart_damage_state()
 
 
-///Proc to hook behavior associated to the change of the brute_dam variable's value.
+///Proc to hook behavior associated to the change of the brute_dam variable's value. THEOTODO: GOD
 /obj/item/bodypart/proc/set_brute_dam(new_value)
 	if(brute_dam == new_value)
 		return
@@ -324,7 +336,7 @@
 	brute_dam = new_value
 
 
-///Proc to hook behavior associated to the change of the burn_dam variable's value.
+///Proc to hook behavior associated to the change of the burn_dam variable's value.THEOTODO: GOD
 /obj/item/bodypart/proc/set_burn_dam(new_value)
 	if(burn_dam == new_value)
 		return
