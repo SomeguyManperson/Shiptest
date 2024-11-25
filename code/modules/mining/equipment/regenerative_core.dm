@@ -78,12 +78,15 @@
 /obj/item/organ/regenerative_core/proc/applyto(atom/target, mob/user)
 	if(ishuman(target))
 		var/mob/living/carbon/human/H = target
+		if(H.dna.species.id == SPECIES_IPC)
+			to_chat(user, span_notice("[src] has no effect on silicate life."))
+			return
 		if(inert)
-			to_chat(user, "<span class='notice'>[src] has decayed and can no longer be used to heal.</span>")
+			to_chat(user, span_notice("[src] has decayed past usabality."))
 			return
 		else
 			if(H.stat == DEAD)
-				to_chat(user, "<span class='notice'>[src] is useless on the dead.</span>")
+				to_chat(user, span_notice("[src] is useless on the dead."))
 				return
 			if(H != user)
 				H.visible_message(span_notice("[user] holds [src] against [H]'s body, coaxing the regenerating tendrils from [src]..."))
@@ -194,11 +197,11 @@
 	if(ishuman(target))
 		var/mob/living/carbon/human/H = target
 		if(inert)
-			to_chat(user, "<span class='notice'>[src] has broken and can no longer be used to heal.</span>")
+			to_chat(user, span_notice("[src] has decayed beyond usability."))
 			return
 		else
 			if(H.stat == DEAD)
-				to_chat(user, "<span class='notice'>[src] is useless on the dead.</span>")
+				to_chat(user, span_notice("[src] is useless on the dead."))
 				return
 			if(H != user)
 				H.visible_message(span_notice("[user] holds [src] against [H]'s body, coaxing the regenerating crystals from [src]..."))
