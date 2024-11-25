@@ -66,7 +66,7 @@
 		owner.adjustFireLoss(-100)
 		owner.adjustOxyLoss(-50)
 		owner.adjustToxLoss(-50)
-		owner.adjustTrauma(TRAUMA_GAIN_LEGION)
+		owner.adjustTrauma(TRAUMA_GAIN_LEGION * 2)
 	qdel(src)
 
 /obj/item/organ/regenerative_core/on_life()

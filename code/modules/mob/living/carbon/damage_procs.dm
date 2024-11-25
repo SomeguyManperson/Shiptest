@@ -336,13 +336,13 @@
 		parts -= part_in_question
 
 // Traumatize this blorbo
-/mob/living/carbon/proc/adjustTrauma(amt)
+/mob/living/carbon/adjustTrauma(amt)
 	var/list/obj/item/bodypart/parts = get_damageable_bodyparts(BODYTYPE_ORGANIC)
 	for(var/obj/item/bodypart/part in parts)
 		part.adjust_trauma(amt)
 
 /// Gets the average trauma value of a blorbo
-/mob/living/carbon/proc/getTrauma()
+/mob/living/carbon/getTrauma()
 	. = 0
 	var/parts = LAZYLEN(bodyparts)
 	for(var/obj/item/bodypart/BP as anything in bodyparts)

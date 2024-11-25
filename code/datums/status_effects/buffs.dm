@@ -401,24 +401,31 @@
 /datum/status_effect/regenerative_core
 	id = "Regenerative Core"
 	duration = 1 MINUTES
-	status_type = STATUS_EFFECT_REPLACE
+	status_type = STATUS_EFFECT_REFRESH
 	alert_type = /atom/movable/screen/alert/status_effect/regenerative_core
+	///amount of trauma generated when the core effect ends
+	var/trauma_paintrain = TRAUMA_GAIN_LEGION
 
 /datum/status_effect/regenerative_core/on_apply()
 	ADD_TRAIT(owner, TRAIT_IGNOREDAMAGESLOWDOWN, id)
 	owner.adjustBruteLoss(-20)
 	owner.adjustFireLoss(-20)
 	owner.remove_CC()
-	owner.reagents.add_reagent(/datum/reagent/medicine/soulus=15)
 	owner.bodytemperature = owner.get_body_temp_normal()
-	if(iscarbon(owner))
-		var/mob/living/carbon/blorbo = owner
-		blorbo.adjustTrauma(TRAUMA_GAIN_LEGION)
 	return TRUE
 
 /datum/status_effect/regenerative_core/on_remove()
 	REMOVE_TRAIT(owner, TRAIT_IGNOREDAMAGESLOWDOWN, id)
+	owner.adjustTrauma(TRAUMA_GAIN_LEGION)
 	to_chat(owner, span_warning("The tendrils of the regenerative core sink into your flesh, leaving dark markings where they dive."))
+
+/datum/status_effect/regenerative_core/refresh()
+	..()
+	owner.adjustBruteLoss(-20)
+	owner.adjustFireLoss(-20)
+	owner.remove_CC()
+	owner.bodytemperature = owner.get_body_temp_normal()
+	trauma_paintrain += TRAUMA_GAIN_LEGION
 
 /datum/status_effect/antimagic
 	id = "antimagic"

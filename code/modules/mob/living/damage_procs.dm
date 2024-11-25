@@ -258,6 +258,12 @@
 /mob/living/proc/setStaminaLoss(amount, updating_health = TRUE, forced = FALSE)
 	return
 
+/mob/living/proc/adjustTrauma(amount)
+	return
+
+/mob/living/proc/getTrauma()
+	return
+
 /**
  * heal ONE external organ, organ gets randomly selected from damaged ones.
  *
