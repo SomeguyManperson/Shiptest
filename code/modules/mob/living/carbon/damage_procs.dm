@@ -342,10 +342,10 @@
 		part.adjust_trauma(amt)
 
 /// Gets the average trauma value of a blorbo
-/mob/living/carbon/getTrauma()
+/mob/living/carbon/getTrauma(average = TRUE)
 	. = 0
 	var/parts = LAZYLEN(bodyparts)
 	for(var/obj/item/bodypart/BP as anything in bodyparts)
 		. += round(BP.trauma_buildup, DAMAGE_PRECISION)
-	if(parts)
+	if(parts && average)
 		. /= parts

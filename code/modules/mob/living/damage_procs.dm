@@ -261,7 +261,7 @@
 /mob/living/proc/adjustTrauma(amount)
 	return
 
-/mob/living/proc/getTrauma()
+/mob/living/proc/getTrauma(average = TRUE)
 	return
 
 /**
