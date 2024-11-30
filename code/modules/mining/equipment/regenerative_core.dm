@@ -91,7 +91,7 @@
 			if(H != user)
 				H.visible_message(span_notice("[user] holds [src] against [H]'s body, coaxing the regenerating tendrils from [src]..."))
 				balloon_alert(user, "applying core...")
-				if(!do_after(user, 2 SECONDS, H)) //teamwork bonus
+				if(!do_after(user, 1 SECONDS, H))
 					to_chat(user, span_warning("You are interrupted, and [src]'s tendrils retreat back into its form."))
 					return
 				balloon_alert(user, "core applied!")
@@ -100,18 +100,14 @@
 			else
 				to_chat(user, span_notice("You hold [src] against your body, coaxing the regenerating tendrils from [src]..."))
 				balloon_alert(user, "applying core...")
-				if(!do_after(user, 4 SECONDS, src))
+				if(!do_after(user, 1 SECONDS, src))
 					to_chat(user, span_warning("You are interrupted, and [src]'s tendrils retreat back into its form."))
 					return
 				balloon_alert(user, "core applied!")
 				to_chat(user, span_notice("[src] explodes into a flurry of tendrils, rapidly spreading across your body. They will hold you together and allow you to keep moving, but for how long?"))
 				SSblackbox.record_feedback("nested tally", "hivelord_core", 1, list("[type]", "used", "self"))
 			H.apply_status_effect(STATUS_EFFECT_REGENERATIVE_CORE)
-			if(H.getTrauma() > TRAUMA_LEGION_MALIGNANT && !istype(H.getorganslot(ORGAN_SLOT_REGENERATIVE_CORE), /obj/item/organ/legion_skull) && istype(src, /obj/item/organ/regenerative_core/legion)) //BAD NEWS you are GOING TO DIE
-				var/obj/item/organ/legion_skull/spare_ribs = new()
-				spare_ribs.Insert(H)
-				to_chat(H, span_boldwarning("As [src] is applied, you notice something moving under your skin..."))
-			SEND_SIGNAL(H, COMSIG_ADD_MOOD_EVENT, "core", /datum/mood_event/healsbadman) //Now THIS is a miner buff (fixed - nerf)
+			SEND_SIGNAL(H, COMSIG_ADD_MOOD_EVENT, "core", /datum/mood_event/healsbadman)
 			qdel(src)
 
 /obj/item/organ/regenerative_core/afterattack(atom/target, mob/user, proximity_flag)
@@ -206,7 +202,7 @@
 			if(H != user)
 				H.visible_message(span_notice("[user] holds [src] against [H]'s body, coaxing the regenerating crystals from [src]..."))
 				balloon_alert(user, "applying core...")
-				if(!do_after(user, 2 SECONDS, H)) //teamwork bonus
+				if(!do_after(user, 1 SECONDS, H)) //teamwork bonus
 					to_chat(user, span_warning("You are interrupted, and [src]'s crystals retreat back into its form."))
 					return
 				balloon_alert(user, "core applied!")
@@ -215,7 +211,7 @@
 			else
 				to_chat(user, span_notice("You hold [src] against your body, coaxing the regenerating crystals from [src]..."))
 				balloon_alert(user, "applying core...")
-				if(!do_after(user, 4 SECONDS, src))
+				if(!do_after(user, 1 SECONDS, src))
 					to_chat(user, span_warning("You are interrupted, and [src]'s crystals retreat back into its form."))
 					return
 				balloon_alert(user, "core applied!")
@@ -227,7 +223,7 @@
 				var/obj/item/organ/legion_skull/spare_ribs = new()
 				spare_ribs.Insert(H)
 				to_chat(H, span_boldwarning("As [src] is applied, you notice something moving under your skin..."))
-			SEND_SIGNAL(H, COMSIG_ADD_MOOD_EVENT, "core", /datum/mood_event/healsbadman) //Now THIS is a miner buff (fixed - nerf)
+			SEND_SIGNAL(H, COMSIG_ADD_MOOD_EVENT, "core", /datum/mood_event/healsbadman)
 			qdel(src)
 
 /obj/item/organ/regenerative_core/legion/crystal/update_icon_state()

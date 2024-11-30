@@ -416,8 +416,15 @@
 
 /datum/status_effect/regenerative_core/on_remove()
 	REMOVE_TRAIT(owner, TRAIT_IGNOREDAMAGESLOWDOWN, id)
-	owner.adjustTrauma(TRAUMA_GAIN_LEGION)
-	to_chat(owner, span_warning("The tendrils of the regenerative core sink into your flesh, leaving dark markings where they dive."))
+	owner.adjustTrauma(trauma_paintrain) //HERE COMES. THE PAIN TRAIN.
+	if(owner.getTrauma() > TRAUMA_LEGION_MALIGNANT && iscarbon(owner))
+		var/mob/living/carbon/blorbo = owner
+		if(!istype(blorbo.getorganslot(ORGAN_SLOT_REGENERATIVE_CORE), /obj/item/organ/legion_skull)) //BAD NEWS you are GOING TO DIE
+			var/obj/item/organ/legion_skull/spare_ribs = new()
+			spare_ribs.Insert(blorbo)
+		to_chat(owner, span_warning("The tendrils of the regenerative core slither under your flesh, and you feel a lump growing in your chest..."))
+	else
+		to_chat(owner, span_warning("The tendrils of the regenerative core sink into your flesh, leaving dark markings where they dive."))
 
 /datum/status_effect/regenerative_core/refresh()
 	..()
@@ -426,6 +433,8 @@
 	owner.remove_CC()
 	owner.bodytemperature = owner.get_body_temp_normal()
 	trauma_paintrain += TRAUMA_GAIN_LEGION
+	if(trauma_paintrain + owner.getTrauma() >= TRAUMA_LEGION_MALIGNANT)
+		to_chat(owner, span_warning("The tendrils of the reinforcing your body suddenly grow taught- something is very wrong."))
 
 /datum/status_effect/antimagic
 	id = "antimagic"
