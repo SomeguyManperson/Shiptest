@@ -48,7 +48,10 @@
 	var/robust_searching = 0 //By default, mobs have a simple searching method, set this to 1 for the more scrutinous searching (stat_attack, stat_exclusive, etc), should be disabled on most mobs
 	var/vision_range = 9 //How big of an area to search for targets in, a vision of 9 attempts to find targets as soon as they walk into screen view
 	var/aggro_vision_range = 9 //If a mob is aggro, we search in this radius. Defaults to 9 to keep in line with original simple mob aggro radius
-	var/search_objects = 0 //If we want to consider objects when searching around, set this to 1. If you want to search for objects while also ignoring mobs until hurt, set it to 2. To completely ignore mobs, even when attacked, set it to 3
+	var/list/threat_tracker = null //List of threat sources
+	var/list/threat_barks = list("Fuck you!", "Your turn!", "You little fuck!") //TTD SIMPLEHUMAN SIMPLEHUMAN SIMPLEHUMAN
+	var/list/tragedy_barks = list("They killed Kenny!") //TTD SEE ABOVE
+	var/search_objects = SEARCH_OBJECTS_NONE //If we want to consider objects when searching around, set this to 1. If you want to search for objects while also ignoring mobs until hurt, set it to 2. To completely ignore mobs, even when attacked, set it to 3
 	var/search_objects_timer_id //Timer for regaining our old search_objects value after being attacked
 	var/search_objects_regain_time = 30 //the delay between being attacked and gaining our old search_objects value back
 	var/list/wanted_objects = list() //A typecache of objects types that will be checked against to attack, should we have search_objects enabled
@@ -141,9 +144,17 @@
 /mob/living/simple_animal/hostile/attacked_by(obj/item/I, mob/living/user)
 	if(stat == CONSCIOUS && !target && AIStatus != AI_OFF && !client && user)
 		FindTarget(list(user), 1)
+	var/damcalc = I.force * (100-run_armor_check(attack_flag = MELEE, armour_penetration = I.armour_penetration, silent = TRUE)*0.1)
+	handle_threat(user, damcalc * THREAT_MELEE_COEFF)
 	return ..()
 
 /mob/living/simple_animal/hostile/bullet_act(obj/projectile/P)
+	var/damcalc = P.damage * (100-run_armor_check(attack_flag = P.flag, armour_penetration = P.armour_penetration, silent = TRUE)*0.01)
+	if(P.suppressed)
+		damcalc *= THREAT_SUPPRESSED_COEFF //it's quiet so they don't know who shooted them
+	if(get_dist(GET_TARGETS_FROM(src), P.firer) > get_dist(GET_TARGETS_FROM(src),target))
+		damcalc *= THREAT_LONGRANGE_COEFF
+	handle_threat(P.firer, damcalc * THREAT_PROJECTILE_COEFF)
 	if(stat == CONSCIOUS && !target && AIStatus != AI_OFF && !client)
 		if(P.firer && get_dist(src, P.firer) <= aggro_vision_range)
 			FindTarget(list(P.firer), 1)
@@ -200,14 +211,12 @@
 	return
 
 /mob/living/simple_animal/hostile/proc/PickTarget(list/Targets)//Step 3, pick amongst the possible, attackable targets
-	if(target != null)//If we already have a target, but are told to pick again, calculate the lowest distance between all possible, and pick from the lowest distance targets
-		var/atom/target_from = GET_TARGETS_FROM(src)
-		for(var/pos_targ in Targets)
-			var/atom/A = pos_targ
-			var/target_dist = get_dist(target_from, target)
-			var/possible_target_distance = get_dist(target_from, A)
-			if(target_dist < possible_target_distance)
-				Targets -= A
+	if(target != null)//If we already have a target, but are told to pick again, calculate the highest threat between all possible, and pick from the higher threat targets
+		for(var/threat_check in Targets)
+			if(LAZYACCESS(threat_tracker, threat_check) < LAZYACCESS(threat_tracker, target))
+				Targets -= threat_check
+				continue
+
 	if(!Targets.len)//We didnt find nothin!
 		return
 	var/chosen_target = pick(Targets)//Pick the remaining targets (if any) at random
@@ -225,7 +234,7 @@
 
 	if(see_invisible < the_target.invisibility)//Target's invisible to us, forget it
 		return FALSE
-	if(search_objects < 2)
+	if(search_objects < SEARCH_OBJECTS_UNTIL_HURT)
 		if(isliving(the_target))
 			var/mob/living/L = the_target
 			var/faction_check = faction_check_mob(L)
@@ -357,15 +366,27 @@
 
 /mob/living/simple_animal/hostile/adjustHealth(amount, updating_health = TRUE, forced = FALSE)
 	. = ..()
-	if(!ckey && !stat && search_objects < 3 && . > 0)//Not unconscious, and we don't ignore mobs
+	if(!ckey && !stat && search_objects < SEARCH_OBJECTS_NOT_MOBS && . > 0)//Not unconscious, and we don't ignore mobs
 		if(search_objects)//Turn off item searching and ignore whatever item we were looking at, we're more concerned with fight or flight
 			LoseTarget()
 			LoseSearchObjects()
 		if(AIStatus != AI_ON && AIStatus != AI_OFF)
 			toggle_ai(AI_ON)
 			FindTarget()
-		else if(target != null && prob(40))//No more pulling a mob forever and having a second player attack it, it can switch targets now if it finds a more suitable one
-			FindTarget()
+		//else if(target != null && prob(40))//No more pulling a mob forever and having a second player attack it, it can switch targets now if it finds a more suitable one
+			//FindTarget()
+
+/// Adds or removes threat and attempts to switch targets if the cause has more threat than the current target
+/mob/living/simple_animal/hostile/proc/handle_threat(the_twat, amount)
+	if(!robust_searching) //BUDGET MODE TURN OFF
+		return
+	LAZYADDASSOC(threat_tracker, the_twat, amount)
+	if(get_dist(src, the_twat) > aggro_vision_range || the_twat == target) //if we can't switch targets don't
+		return
+	if(LAZYACCESS(threat_tracker, the_twat) > LAZYACCESS(threat_tracker, target))
+		FindTarget(list(the_twat), TRUE)
+		if(LAZYLEN(threat_barks))
+			INVOKE_ASYNC(src, TYPE_PROC_REF(/atom/movable, say), "[pick(threat_barks)]")
 
 
 /mob/living/simple_animal/hostile/proc/AttackingTarget()
@@ -415,6 +436,8 @@
 			if(M.AIStatus == AI_OFF)
 				return
 			else
+				if(target)
+					M.handle_threat(target, THREAT_HELP_HELP)
 				M.Goto(src,M.move_to_delay,M.minimum_distance)
 
 /mob/living/simple_animal/hostile/proc/CheckFriendlyFire(atom/A)
@@ -580,7 +603,7 @@
 
 //These two procs handle losing and regaining search_objects when attacked by a mob
 /mob/living/simple_animal/hostile/proc/LoseSearchObjects()
-	search_objects = 0
+	search_objects = SEARCH_OBJECTS_NONE
 	deltimer(search_objects_timer_id)
 	search_objects_timer_id = addtimer(CALLBACK(src, PROC_REF(RegainSearchObjects)), search_objects_regain_time, TIMER_STOPPABLE)
 

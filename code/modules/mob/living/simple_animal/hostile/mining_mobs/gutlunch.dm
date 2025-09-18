@@ -34,7 +34,7 @@
 	stop_automated_movement_when_pulled = TRUE
 	stat_exclusive = TRUE
 	robust_searching = TRUE
-	search_objects = 3 //Ancient simplemob AI shitcode. This makes them ignore all other mobs.
+	search_objects = SEARCH_OBJECTS_NOT_MOBS //Ancient simplemob AI shitcode. This makes them ignore all other mobs.
 	del_on_death = TRUE
 	loot = list(/obj/effect/decal/cleanable/blood/gibs)
 	deathmessage = "is pulped into bugmash."

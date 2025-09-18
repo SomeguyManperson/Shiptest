@@ -29,7 +29,7 @@
 	throw_message = "sinks in slowly, before being pushed out of "
 	deathmessage = "stops moving as green liquid oozes from the carcass!"
 	status_flags = CANPUSH
-	search_objects = 1
+	search_objects = SEARCH_OBJECTS_AND_MOBS
 	wanted_objects = list(
 		/obj/item/stack/ore/diamond,
 		/obj/item/stack/ore/gold,

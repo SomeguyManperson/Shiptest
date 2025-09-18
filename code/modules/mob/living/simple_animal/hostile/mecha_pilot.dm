@@ -22,7 +22,7 @@ Featuring:
 	name = "Ramzi Clique Exowarrior"
 	desc = "A highly-trained pilot of the Clique, specialized in Exosuit operations."
 	wanted_objects = list()
-	search_objects = 0
+	search_objects = SEARCH_OBJECTS_NONE
 	mob_biotypes = MOB_ORGANIC|MOB_HUMANOID
 
 	var/spawn_mecha_type = /obj/mecha/combat/marauder/touro/loaded
@@ -39,7 +39,7 @@ Featuring:
 
 /mob/living/simple_animal/hostile/human/ramzi/mecha_pilot/no_mech
 	spawn_mecha_type = null
-	search_objects = 2
+	search_objects = SEARCH_OBJECTS_UNTIL_HURT
 
 /mob/living/simple_animal/hostile/human/ramzi/mecha_pilot/no_mech/Initialize()
 	. = ..()
@@ -89,7 +89,7 @@ Featuring:
 		minimum_distance = 1
 		ranged = 0
 	wanted_objects = list()
-	search_objects = 0
+	search_objects = SEARCH_OBJECTS_NONE
 	if(mecha && mecha.lights_action) //an AI mecha is an EVIL EVIL thing, so let's not hide them in the dark
 		mecha.lights_action.Activate()
 

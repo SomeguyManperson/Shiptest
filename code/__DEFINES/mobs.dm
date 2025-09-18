@@ -307,6 +307,24 @@
 #define AI_OFF 3
 #define AI_Z_OFF 4
 
+//Search Objects
+#define SEARCH_OBJECTS_NONE 0
+#define SEARCH_OBJECTS_AND_MOBS 1
+#define SEARCH_OBJECTS_UNTIL_HURT 2
+#define SEARCH_OBJECTS_NOT_MOBS 3
+
+//Threat
+//Threat sources
+#define THREAT_TRAGIC_DEATH 200
+#define THREAT_HELP_HELP 70
+#define THREAT_DRILL_PISSING_ME_OFF 1
+//Threat modifiers
+#define THREAT_MELEE_COEFF 2 //threat multiplier for damage from being stabbed
+#define THREAT_PROJECTILE_COEFF 1 //threat multiplier for damage from being shot
+#define THREAT_SUPPRESSED_COEFF 0.5 //threat multiplier if shot with a suppressed weapon
+#define THREAT_LONGRANGE_COEFF 0.75 //threat multiplier if shot from a further range than the current target
+#define THREAT_MULT_FORGOR 0.2 //amount of threat retained on losing aggro
+
 //The range at which a mob should wake up if you spawn into the z level near it
 #define MAX_SIMPLEMOB_WAKEUP_RANGE 5
 

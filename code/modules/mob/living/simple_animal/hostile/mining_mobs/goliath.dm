@@ -45,7 +45,7 @@
 	food_type = list(/obj/item/food/meat, /obj/item/food/grown/ash_flora/cactus_fruit, /obj/item/food/grown/ash_flora/mushroom_leaf)
 	tame_chance = 0
 	bonus_tame_chance = 10
-	search_objects = 1
+	search_objects = SEARCH_OBJECTS_AND_MOBS
 	wanted_objects = list(/obj/structure/flora/ash)
 
 	footstep_type = FOOTSTEP_MOB_HEAVY

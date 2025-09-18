@@ -24,7 +24,7 @@
 	food_type = list(/obj/item/food/fishmeat/carp)
 	tame_chance = 10
 	bonus_tame_chance = 5
-	search_objects = 1
+	search_objects = SEARCH_OBJECTS_AND_MOBS
 	wanted_objects = list(/obj/item/storage/cans)
 
 	harm_intent_damage = 8

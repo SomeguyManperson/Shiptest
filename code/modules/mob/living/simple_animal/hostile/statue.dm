@@ -42,7 +42,7 @@
 	vision_range = 12
 	aggro_vision_range = 12
 
-	search_objects = 1 // So that it can see through walls
+	search_objects = SEARCH_OBJECTS_AND_MOBS // So that it can see through walls
 
 	sight = SEE_SELF|SEE_MOBS|SEE_OBJS|SEE_TURFS
 

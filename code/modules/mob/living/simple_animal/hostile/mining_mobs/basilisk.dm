@@ -227,7 +227,7 @@
 	loot = list()
 	butcher_results = list(/obj/item/stack/ore/diamond = 2, /obj/item/stack/sheet/sinew = 2, /obj/item/stack/sheet/bone = 1)
 	lava_drinker = FALSE
-	search_objects = 1
+	search_objects = SEARCH_OBJECTS_AND_MOBS
 	wanted_objects = list(/obj/item/pen/survival, /obj/item/stack/ore/diamond)
 
 /mob/living/simple_animal/hostile/asteroid/basilisk/watcher/gib()

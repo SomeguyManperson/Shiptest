@@ -80,6 +80,10 @@
 		update_icon_state()
 	if(!active && our_vein?.currently_spawning)
 		our_vein.stop_spawning()
+	if(active)
+		for(var/mob/living/simple_animal/hostile/angery in range(5,src)) //gradually irritate all enemies nearby
+			if(faction_check(angery.faction, list("mining")))
+				angery.handle_threat(src, THREAT_DRILL_PISSING_ME_OFF)
 
 /obj/machinery/drill/Destroy()
 	QDEL_NULL(soundloop)

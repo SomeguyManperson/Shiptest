@@ -93,6 +93,16 @@
 			visible_message(span_danger("[src]'s [l_hand.name] is destroyed as they collapse!"))
 
 
+/mob/living/simple_animal/hostile/human/death(gibbed)
+	if(target) //arg ive been shot //TTD this SUCKS and doesn't check who did the deed
+		for(var/mob/living/simple_animal/hostile/human/cesar in oview(7, get_turf(GET_TARGETS_FROM(src))))
+			if(faction_check(cesar.faction, faction))
+				cesar.handle_threat(target, 40 * THREAT_TRAGIC_DEATH)
+				if(tragedy_barks && prob(20))
+					INVOKE_ASYNC(src, TYPE_PROC_REF(/atom/movable, say), "[pick(tragedy_barks)]")
+
+	..(gibbed)
+
 /mob/living/simple_animal/hostile/human/vv_edit_var(var_name, var_value)
 	switch(var_name)
 		if (NAMEOF(src, armor_base))

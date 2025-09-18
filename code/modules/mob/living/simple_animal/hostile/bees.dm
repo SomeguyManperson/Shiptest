@@ -47,7 +47,7 @@
 	mob_size = MOB_SIZE_TINY
 	mob_biotypes = MOB_ORGANIC|MOB_BUG
 	movement_type = FLYING
-	search_objects = 1 //have to find those plant trays!
+	search_objects = SEARCH_OBJECTS_AND_MOBS //have to find those plant trays!
 
 	//Spaceborn beings don't get hurt by space
 	atmos_requirements = IMMUNE_ATMOS_REQS

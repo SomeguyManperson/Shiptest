@@ -155,7 +155,7 @@
 /mob/living/simple_animal/hostile/mining_drone/proc/SetCollectBehavior()
 	mode = MINEDRONE_COLLECT
 	vision_range = 9
-	search_objects = 2
+	search_objects = SEARCH_OBJECTS_UNTIL_HURT
 	wander = TRUE
 	ranged = FALSE
 	minimum_distance = 1
@@ -166,7 +166,7 @@
 /mob/living/simple_animal/hostile/mining_drone/proc/SetOffenseBehavior()
 	mode = MINEDRONE_ATTACK
 	vision_range = 7
-	search_objects = 0
+	search_objects = SEARCH_OBJECTS_NONE
 	wander = FALSE
 	ranged = TRUE
 	retreat_distance = 2
