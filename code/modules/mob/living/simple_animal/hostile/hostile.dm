@@ -152,7 +152,7 @@
 	var/damcalc = P.damage * (100-run_armor_check(attack_flag = P.flag, armour_penetration = P.armour_penetration, silent = TRUE)*0.01)
 	if(P.suppressed)
 		damcalc *= THREAT_SUPPRESSED_COEFF //it's quiet so they don't know who shooted them
-	if(get_dist(GET_TARGETS_FROM(src), P.firer) > get_dist(GET_TARGETS_FROM(src),target))
+	if(target && get_dist(GET_TARGETS_FROM(src), P.firer) > get_dist(GET_TARGETS_FROM(src),target))
 		damcalc *= THREAT_LONGRANGE_COEFF
 	handle_threat(P.firer, damcalc * THREAT_PROJECTILE_COEFF)
 	if(stat == CONSCIOUS && !target && AIStatus != AI_OFF && !client)
